@@ -1,0 +1,93 @@
+costume "blank", "svg" {
+    <svg version="1.1" width="1" height="1" viewBox="0 0 1 1" xmlns="http://www.w3.org/2000/svg"></svg>
+}
+
+enum PenCap {
+    ROUND,
+    FLAT
+}
+
+enum PenParam {
+    COLOR,
+    SATURATION,
+    BRIGHTNESS,
+    TRANSPARENCY
+}
+
+// Khai báo các biến số toàn cục
+var X_Goc = 0;
+var Y_Goc = -50;
+var Goc_Quay = 0;
+var Do_Dai_Vo = 70;
+var Do_Dai = 100;
+var X_Dau = 0;
+var Y_Dau = 0;
+var X_Mieng_Vo = 0;
+var Y_Mieng_Vo = 0;
+
+// Hàm định nghĩa vẽ Piston 2 lớp (Run without screen refresh)
+nowarp proc ve_piston_2_lop {
+    erase_all;
+
+    // 1. Tính toán tọa độ
+    X_Dau = X_Goc + (Do_Dai * sin(Goc_Quay));
+    Y_Dau = Y_Goc + (Do_Dai * cos(Goc_Quay));
+
+    X_Mieng_Vo = X_Goc + (Do_Dai_Vo * sin(Goc_Quay));
+    Y_Mieng_Vo = Y_Goc + (Do_Dai_Vo * cos(Goc_Quay));
+
+    // 2. Vẽ Lõi ruột Piston (Màu xám sáng, nét mỏng)
+    set_pen_color #C0C0C0;
+    set_pen_size 10;
+    pen_up;
+    goto X_Goc, Y_Goc;
+    pen_down;
+    goto X_Dau, Y_Dau;
+    pen_up;
+
+    // 3. Vẽ Vỏ xi-lanh (Màu xám đậm, nét dày đè lên phần gốc)
+    set_pen_color #4A5568;
+    set_pen_size 24;
+    pen_up;
+    goto X_Goc, Y_Goc;
+    pen_down;
+    goto X_Mieng_Vo, Y_Mieng_Vo;
+    pen_up;
+
+    // 4. Vẽ chi tiết khớp và gờ xi-lanh
+    set_pen_color #1A202C;
+    set_pen_size 30;
+    goto X_Goc, Y_Goc;
+    pen_down;
+    pen_up;
+
+    set_pen_color #000000;
+    set_pen_size 26;
+    goto X_Mieng_Vo, Y_Mieng_Vo;
+    pen_down;
+    pen_up;
+
+    set_pen_color #FF4500;
+    set_pen_size 16;
+    goto X_Dau, Y_Dau;
+    pen_down;
+    pen_up;
+}
+
+// Vòng lặp chính của chương trình
+onflag {
+    clear_graphic_effects;
+    erase_all;
+    
+    X_Goc = 0;
+    Y_Goc = -50;
+    Goc_Quay = 0;
+    Do_Dai_Vo = 70;
+    Do_Dai = 100;
+
+    forever {
+        Goc_Quay += 2;
+        Do_Dai = 80 + (40 * sin(Goc_Quay * 3));
+        ve_piston_2_lop;
+    }
+}
